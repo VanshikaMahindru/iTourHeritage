@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Booking | iTour Heritage</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: #fff;
+      padding-bottom: 40px;
+    }
+
+    header {
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(10px);
+    }
+
+    header h1 {
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      margin-left: 20px;
+      transition: 0.3s;
+    }
+
+    nav a:hover {
+      color: #ffd369;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 50px auto;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #ffd369;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 10px 12px;
+      margin-bottom: 20px;
+      border: none;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      font-size: 14px;
+    }
+
+    select option {
+      color: #fff;
+      background: rgba(15, 32, 39, 0.8);
+    }
+
+
+    input::placeholder {
+      color: #ccc;
+    }
+
+    input:focus,
+    select:focus {
+      outline: 2px solid #ffd369;
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .btn-submit {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      background: #ffd369;
+      color: #000;
+      font-weight: 600;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      transition: 0.3s;
+      font-size: 16px;
+    }
+
+    .btn-submit:hover {
+      background: #ffbf00;
+      transform: scale(1.05);
+    }
+
+    .alert {
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    .alert-success {
+      background-color: rgba(50, 205, 50, 0.2);
+      color: #00ff00;
+    }
+
+    .alert-danger {
+      background-color: rgba(255, 0, 0, 0.2);
+      color: #ff4d4d;
+    }
+
+    .new-visitor-fields {
+      display: none;
+      margin-top: 10px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      margin-top: 50px;
+      font-size: 13px;
+      color: #aaa;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>iTour Heritage</h1>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/monuments">Monuments</a>
+      <a href="/guides">Guides</a>
+      <a href="/visitors">Visitors</a>
+      <a href="/bookings">Bookings</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <h2>Create Booking</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <form action="{{ url_for('confirm_booking') }}" method="POST">
+
+      <label>Visitor</label>
+      <select name="visitor_id" id="visitor_select" onchange="toggleNewVisitor()" required>
+        <option disabled selected>Select Visitor</option>
+        {% for v in visitors %}
+        <option value="{{ v.visitor_id }}">{{ v.name }}</option>
+        {% endfor %}
+        <option value="new">+ Add New Visitor</option>
+      </select>
+
+
+      <div class="new-visitor-fields" id="new_visitor_fields">
+        <input type="text" name="new_visitor_name" placeholder="Visitor Name">
+        <input type="email" name="new_visitor_email" placeholder="Visitor Email">
+        <input type="text" name="new_visitor_phone" placeholder="Visitor Phone">
+      </div>
+
+
+      <label>Booking Type</label>
+      <select name="booking_type" id="booking_type" required onchange="updateTargetOptions()">
+        <option value="MONUMENT">Monument</option>
+        <option value="EXPERIENCE">Experience</option>
+        <option value="GUIDE">Guide</option>
+      </select>
+
+
+      <label>Target</label>
+      <select name="target_id" id="target_select" required>
+        <optgroup label="Monuments">
+          {% for m in monuments %}
+          <option value="{{ m.id }}" class="monument-option">{{ m.name }}</option>
+          {% endfor %}
+        </optgroup>
+        <optgroup label="Experiences">
+          {% for e in experiences %}
+          <option value="{{ e.id }}" class="experience-option">{{ e.name }}</option>
+          {% endfor %}
+        </optgroup>
+        <optgroup label="Guides">
+          {% for g in guides %}
+          <option value="{{ g.id }}" class="guide-option">{{ g.name }}</option>
+          {% endfor %}
+        </optgroup>
+      </select>
+
+
+      <label>Scheduled Date & Time</label>
+      <input type="datetime-local" name="scheduled_date" required>
+
+
+      <label>Amount</label>
+      <input type="number" step="0.01" name="amount" required>
+
+
+      <label>Payment Method</label>
+      <select name="payment_method" required>
+        <option disabled selected>Select Payment Method</option>
+        <option value="CASH">Cash</option>
+        <option value="CARD">Card</option>
+        <option value="UPI">UPI</option>
+        <option value="ONLINE">Online Banking</option>
+      </select>
+
+      <button type="submit" class="btn-submit">Submit</button>
+    </form>
+  </div>
+
+  <footer>
+    © 2025 iTour Heritage System | DBMS Project
+  </footer>
+
+  <script>
+
+    function updateTargetOptions() {
+      const bookingType = document.getElementById('booking_type').value;
+      const allOptions = document.querySelectorAll('#target_select option');
+
+      allOptions.forEach(opt => {
+        if (
+          (bookingType === 'MONUMENT' && opt.classList.contains('monument-option')) ||
+          (bookingType === 'EXPERIENCE' && opt.classList.contains('experience-option')) ||
+          (bookingType === 'GUIDE' && opt.classList.contains('guide-option'))
+        ) {
+          opt.style.display = '';
+        } else {
+          opt.style.display = 'none';
+        }
+      });
+
+
+      for (let opt of allOptions) {
+        if (opt.style.display !== 'none') {
+          opt.selected = true;
+          break;
+        }
+      }
+    }
+
+
+
+    function toggleNewVisitor() {
+      const select = document.getElementById('visitor_select');
+      const newVisitorFields = document.getElementById('new_visitor_fields');
+      if (select.value === 'new') newVisitorFields.style.display = 'block';
+      else newVisitorFields.style.display = 'none';
+    }
+
+    updateTargetOptions();
+  </script>
+
+</body>
+
+</html>

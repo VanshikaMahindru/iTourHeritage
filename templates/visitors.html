@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Visitors | iTour Heritage</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: #fff;
+    }
+
+    header {
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(10px);
+    }
+
+    header h1 {
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      margin-left: 20px;
+      transition: 0.3s;
+    }
+
+    nav a:hover {
+      color: #ffd369;
+    }
+
+    .container {
+      padding: 40px;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    .title {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .title h2 {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+
+    .title p {
+      color: #dcdcdc;
+      font-size: 14px;
+    }
+
+    .visitors-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 25px;
+    }
+
+    .visitor-card {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 20px;
+      backdrop-filter: blur(12px);
+      transition: 0.3s;
+    }
+
+    .visitor-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .visitor-card h3 {
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+
+    .visitor-card span {
+      font-size: 13px;
+      color: #ffd369;
+    }
+
+    .visitor-card p {
+      font-size: 14px;
+      color: #e0e0e0;
+      margin: 10px 0;
+    }
+
+    .details {
+      font-size: 13px;
+      color: #ccc;
+      line-height: 1.6;
+    }
+
+    #newVisitorForm input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 8px;
+      border: none;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    #newVisitorForm button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 20px;
+      background: #ffd369;
+      color: #000;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.4);
+      margin-top: 40px;
+      font-size: 13px;
+      color: #aaa;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>iTour Heritage</h1>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/monuments">Monuments</a>
+      <a href="/guides">Guides</a>
+      <a href="/visitors">Visitors</a>
+      <a href="/bookings">Bookings</a>
+    </nav>
+  </header>
+
+  <section class="container">
+    <div class="title">
+      <h2>Registered Visitors</h2>
+      <p>Manage and view all tourist details</p>
+    </div>
+
+    <div style="text-align:center; margin-bottom:30px;">
+      <button id="addVisitorBtn">+ Add New Visitor</button>
+    </div>
+
+    <div id="newVisitorForm"
+      style="display:none; background:rgba(255,255,255,0.05); padding:20px; border-radius:15px; margin-bottom:30px;">
+      <form action="{{ url_for('add_visitor') }}" method="POST">
+        <input type="text" name="name" placeholder="Visitor Name" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="text" name="phone" placeholder="Phone Number">
+        <input type="text" name="country" placeholder="Country">
+        <button type="submit">Add Visitor</button>
+      </form>
+    </div>
+
+    <div class="visitors-grid">
+      {% for visitor in visitors %}
+      <div class="visitor-card">
+        <h3>{{ visitor.name }}</h3>
+        <span>Visitor ID: {{ visitor.visitor_id }}</span>
+        <p>Country: {{ visitor.country }}</p>
+        <div class="details">
+          Email: {{ visitor.email }}<br>
+          Phone: {{ visitor.phone }}<br>
+          Visits: {{ visitor.visit_count or 0 }}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <footer>
+    © 2025 iTour Heritage System | DBMS Project
+  </footer>
+
+  <script>
+    document.getElementById('addVisitorBtn').addEventListener('click', () => {
+      const form = document.getElementById('newVisitorForm');
+      form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    });
+  </script>
+
+</body>
+
+</html>
