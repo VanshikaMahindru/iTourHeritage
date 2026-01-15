@@ -21,6 +21,7 @@ iTour Heritage is a database-driven Flask web application designed for smart tou
 ---
 
 ## Project Structure
+<pre>
 ITOUR_UI/
 │
 ├── app.py # Main Flask application
@@ -37,6 +38,7 @@ ITOUR_UI/
 │
 └── static/
 └── images/ # Monument and UI images
+</pre>
 
 ## How to Run
 1. Import `itourheritage.sql` into MySQL
